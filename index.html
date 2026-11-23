@@ -2,18 +2,20 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#050810">
+  <meta name="theme-color" content="#080d18">
   <meta name="description" content="Prof. Roberto — Plataforma de IA Educacional para Ensino Médio">
   <title>Prof. Roberto — IA Educacional</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=6">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <!-- PDF.js (extração de texto de PDFs); o OCR (Tesseract.js) é carregado sob demanda -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <!-- Supabase v2 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
@@ -31,8 +33,58 @@
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<!-- Acessibilidade opcional -->
+<div class="accessibility-tools" id="accessibilityTools">
+  <button type="button" class="accessibility-trigger" id="accessibilityTrigger"
+    aria-expanded="false" aria-controls="accessibilityPanel" aria-label="Abrir opções de acessibilidade">
+    <span aria-hidden="true">◉</span><span class="accessibility-trigger-label">Acessibilidade</span>
+  </button>
+  <section class="accessibility-panel" id="accessibilityPanel" aria-label="Opções de acessibilidade" hidden>
+    <div class="accessibility-panel-head">
+      <div><strong>Personalizar leitura</strong><small>Ajustes opcionais de visualização</small></div>
+      <button type="button" id="accessibilityClose" aria-label="Fechar opções">×</button>
+    </div>
+    <div class="accessibility-control">
+      <span>Tamanho do texto</span>
+      <div class="accessibility-stepper">
+        <button type="button" id="fontDecrease" aria-label="Diminuir texto">A−</button>
+        <output id="fontScaleValue" aria-live="polite">100%</output>
+        <button type="button" id="fontIncrease" aria-label="Aumentar texto">A+</button>
+      </div>
+    </div>
+    <label class="accessibility-switch"><span>Alto contraste</span><input type="checkbox" id="contrastToggle"><i></i></label>
+    <label class="accessibility-switch"><span>Reduzir animações</span><input type="checkbox" id="motionToggle"><i></i></label>
+    <label class="accessibility-switch"><span>Mais espaço entre linhas</span><input type="checkbox" id="spacingToggle"><i></i></label>
+    <label class="accessibility-switch"><span>Sublinhar links</span><input type="checkbox" id="linksToggle"><i></i></label>
+    <button type="button" class="accessibility-reset" id="accessibilityReset">Restaurar padrão</button>
+  </section>
+</div>
+
 <!-- ══════════ AUTH SCREEN ══════════ -->
 <div id="auth-screen">
+  <section class="auth-promo" aria-label="Conheça o Professor Roberto">
+    <div class="auth-promo-brand">
+      <div class="brand-mark" aria-hidden="true">PR</div>
+      <div><strong>Professor Roberto</strong><span>PLATAFORMA DE APRENDIZAGEM</span></div>
+    </div>
+    <div class="auth-promo-copy">
+      <span class="promo-eyebrow"><i></i> APRENDER COM INTELIGÊNCIA</span>
+      <h1>Suas dúvidas merecem <em>boas respostas.</em></h1>
+      <p>Um espaço para estudar no seu ritmo, organizar ideias e transformar dúvidas em aprendizado.</p>
+      <div class="promo-feature-list">
+        <div><span class="promo-feature-icon">✦</span><span><b>Converse com a IA</b><small>Explicações claras, no seu ritmo</small></span></div>
+        <div><span class="promo-feature-icon">▤</span><span><b>Pratique com quizzes</b><small>Questões para testar o que aprendeu</small></span></div>
+        <div><span class="promo-feature-icon">◷</span><span><b>Organize seus estudos</b><small>Planos, atividades e materiais em um só lugar</small></span></div>
+      </div>
+    </div>
+    <div class="auth-promo-visual" aria-hidden="true">
+      <div class="promo-orbit promo-orbit-one"></div><div class="promo-orbit promo-orbit-two"></div>
+      <div class="promo-glass-card promo-card-main"><span class="promo-card-kicker">SEU ESPAÇO DE ESTUDOS</span><strong>Aprender é uma jornada.</strong><div class="promo-progress"><i></i></div><small>Um passo de cada vez.</small></div>
+      <div class="promo-glass-card promo-card-float"><span>✦</span><div><b>Ideia nova</b><small>Comece pela sua curiosidade</small></div></div>
+      <div class="promo-spark promo-spark-a">✦</div><div class="promo-spark promo-spark-b">✧</div>
+    </div>
+    <div class="auth-promo-footer"><span>EDUCAÇÃO COM TECNOLOGIA</span><span>FEITO PARA APRENDER</span></div>
+  </section>
   <div class="auth-card">
     <div class="auth-logo">
       <span class="auth-logo-icon">👨‍🏫</span>
@@ -132,6 +184,8 @@
           <option value="Biologia">🌿 Biologia</option>
           <option value="Inglês">🇬🇧 Inglês</option>
         </select>
+        <div class="auth-field-label" style="margin-top:8px">Código de acesso do professor</div>
+        <input class="auth-input" id="regCodigoProf" type="password" placeholder="Fornecido pela direção da escola" autocomplete="off">
       </div>
       <div class="auth-hint" id="regHintAluno">
         <span class="auth-hint-icon">💡</span>
@@ -466,37 +520,39 @@ USING (
 </div>
 
 <!-- ══════════ APP SHELL ══════════ -->
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-
 <div class="app-shell">
-  <aside class="sidebar" id="sidebar">
+  <!-- The backdrop must be inside app-shell: this keeps it BELOW the drawer in the same stacking context. -->
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar" aria-label="Menu principal">
     <div class="sidebar-logo">
-      <div class="sidebar-logo-icon">👨‍🏫</div>
-      <div>
+      <div class="sidebar-logo-icon" aria-hidden="true">PR</div>
+      <div class="sidebar-brand-copy">
         <div class="sidebar-logo-name">Prof. Roberto</div>
         <div class="sidebar-logo-sub">IA · Ensino Médio</div>
       </div>
+      <button type="button" class="sidebar-close-btn" onclick="closeSidebar(true)" aria-label="Fechar menu">×</button>
     </div>
-    <nav class="sidebar-nav">
+    <nav class="sidebar-nav" aria-label="Navegação da plataforma">
       <div class="nav-section-label">Principal</div>
-      <div class="nav-item active" onclick="setView('chat')" id="nav-chat"><span class="nav-icon">💬</span> Chat IA</div>
-      <div class="nav-item" onclick="setView('dashboard')" id="nav-dashboard"><span class="nav-icon">📊</span> Dashboard<span class="nav-badge hot">XP</span></div>
+      <div class="nav-item active" onclick="setView('chat')" id="nav-chat" role="button" tabindex="0"><span class="nav-icon">💬</span> Chat IA</div>
+      <div class="nav-item" onclick="setView('dashboard')" id="nav-dashboard" role="button" tabindex="0"><span class="nav-icon">📊</span> Dashboard<span class="nav-badge hot">XP</span></div>
       <div class="nav-section-label" style="margin-top:8px">Ferramentas</div>
-      <div class="nav-item" onclick="setView('quiz')" id="nav-quiz"><span class="nav-icon">🎯</span> Quiz IA</div>
-      <div class="nav-item" onclick="setView('plan')" id="nav-plan"><span class="nav-icon">📅</span> Plano de Estudos</div>
-      <div class="nav-item" onclick="setView('upload')" id="nav-upload"><span class="nav-icon">📄</span> PDF + IA</div>
+      <div class="nav-item" onclick="setView('quiz')" id="nav-quiz" role="button" tabindex="0"><span class="nav-icon">🎯</span> Quiz IA</div>
+      <div class="nav-item" onclick="setView('plan')" id="nav-plan" role="button" tabindex="0"><span class="nav-icon">📅</span> Plano de Estudos</div>
+      <div class="nav-item" onclick="setView('upload')" id="nav-upload" role="button" tabindex="0"><span class="nav-icon">📄</span> PDF + IA</div>
       <div class="nav-section-label" style="margin-top:8px">Sessão</div>
-      <div class="nav-item" onclick="setView('avisos-aluno')" id="nav-avisos-aluno"><span class="nav-icon">📢</span> Avisos</div>
-      <div class="nav-item" onclick="toggleHistory()"><span class="nav-icon">🕓</span> Histórico</div>
-      <div class="nav-item" onclick="clearChat()"><span class="nav-icon">🗑️</span> Limpar chat</div>
+      <div class="nav-item" onclick="setView('atividades-aluno')" id="nav-atividades-aluno" role="button" tabindex="0"><span class="nav-icon">📚</span> Atividades</div>
+      <div class="nav-item" onclick="setView('avisos-aluno')" id="nav-avisos-aluno" role="button" tabindex="0"><span class="nav-icon">📢</span> Avisos</div>
+      <div class="nav-item" role="button" tabindex="0" onclick="toggleHistory()"><span class="nav-icon">🕓</span> Histórico</div>
+      <div class="nav-item" role="button" tabindex="0" onclick="clearChat()"><span class="nav-icon">🗑️</span> Limpar chat</div>
     </nav>
 
     <div class="sidebar-providers">
       <div class="nav-section-label" style="padding:0 0 8px">Modelo de IA</div>
       <div class="provider-row">
-        <button class="provider-pill active" data-p="gemini" onclick="setProvider('gemini')">✦ Gemini</button>
-        <button class="provider-pill" data-p="groq" onclick="setProvider('groq')">⚡ Groq</button>
-        <button class="provider-pill" data-p="mistral" onclick="setProvider('mistral')">🌪 Mistral</button>
+        <button class="provider-pill active" data-p="gemini" aria-pressed="true" onclick="setProvider('gemini')">✦ Gemini</button>
+        <button class="provider-pill" data-p="groq" aria-pressed="false" onclick="setProvider('groq')">⚡ Groq</button>
+        <button class="provider-pill" data-p="mistral" aria-pressed="false" onclick="setProvider('mistral')">🌪 Mistral</button>
       </div>
     </div>
 
@@ -514,12 +570,30 @@ USING (
     </div>
   </aside>
 
+  <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Navegação principal">
+    <button type="button" class="mobile-nav-item active" data-view="chat" aria-current="page" onclick="setView('chat')">
+      <span aria-hidden="true">💬</span><small>Chat</small>
+    </button>
+    <button type="button" class="mobile-nav-item" data-view="quiz" onclick="setView('quiz')">
+      <span aria-hidden="true">🎯</span><small>Quiz</small>
+    </button>
+    <button type="button" class="mobile-nav-item" data-view="plan" onclick="setView('plan')">
+      <span aria-hidden="true">📅</span><small>Plano</small>
+    </button>
+    <button type="button" class="mobile-nav-item" data-view="dashboard" onclick="setView('dashboard')">
+      <span aria-hidden="true">📊</span><small>Progresso</small>
+    </button>
+    <button type="button" class="mobile-nav-item mobile-nav-more" id="mobileNavMore" aria-controls="sidebar" aria-expanded="false" onclick="toggleSidebar()">
+      <span aria-hidden="true">☰</span><small>Mais</small>
+    </button>
+  </nav>
+
   <!-- MAIN -->
   <div class="main">
     <!-- Header -->
     <div class="header">
-      <button class="hamburger-btn" onclick="toggleSidebar()" id="hamburgerBtn">☰</button>
-      <div class="view-label" id="viewLabel">Chat IA</div>
+      <button type="button" class="hamburger-btn" onclick="toggleSidebar()" id="hamburgerBtn" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">☰</button>
+      <div class="header-title-wrap"><div class="view-label" id="viewLabel">Chat IA</div><span class="header-context">SEU AMBIENTE DE APRENDIZAGEM</span></div>
 
       <div class="mode-btns">
         <button class="mode-btn active" data-mode="divertido" onclick="setMode('divertido')">😄 Divertido</button>
@@ -527,6 +601,10 @@ USING (
       </div>
 
       <div class="header-spacer"></div>
+
+      <button type="button" class="focus-timer-toggle" id="focusTimerToggle" aria-expanded="false" aria-controls="focusTimerPanel" title="Abrir temporizador de foco">
+        <span aria-hidden="true">◷</span><span class="focus-timer-toggle-label">Foco</span>
+      </button>
 
       <div class="tts-bar" id="ttsBar">
         <span class="bar"><span></span><span></span><span></span><span></span></span>
@@ -587,7 +665,15 @@ USING (
     <div class="view" id="view-quiz">
       <div class="quiz-view">
         <div class="quiz-header-area"><div class="quiz-title-row"><span style="font-size:24px">🎯</span><div class="quiz-main-title">Quiz IA</div></div><div class="quiz-subtitle">Gere questões automaticamente com IA</div></div>
-        <div class="quiz-gen-box"><div class="quiz-gen-row">
+        <div class="quiz-gen-box">
+        <div class="quiz-subjects-block">
+          <div class="quiz-subjects-head">
+            <span class="quiz-gen-label">Matérias (escolha uma ou várias):</span>
+            <button type="button" class="qs-all" id="quizAllBtn" onclick="toggleAllQuizSubjects()">🌐 Todas as matérias</button>
+          </div>
+          <div class="quiz-subject-chips" id="quizSubjectChips"></div>
+        </div>
+        <div class="quiz-gen-row">
           <span class="quiz-gen-label">Ano:</span>
           <select class="quiz-select" id="quizYear">
             <optgroup label="🏫 Fundamental I">
@@ -613,12 +699,10 @@ USING (
               <option value="Vestibular">Vestibular</option>
             </optgroup>
           </select>
-          <span class="quiz-gen-label">Matéria:</span>
-          <select class="quiz-select" id="quizSubject"><option value="geral">Geral</option><option value="matematica">Matemática</option><option value="fisica">Física</option><option value="quimica">Química</option><option value="biologia">Biologia</option><option value="historia">História</option><option value="geografia">Geografia</option><option value="portugues">Português</option><option value="ingles">Inglês</option><option value="filosofia">Filosofia</option><option value="enem">ENEM</option></select>
           <span class="quiz-gen-label">Dificuldade:</span>
           <select class="quiz-select" id="quizDiff"><option value="fácil">Fácil</option><option value="médio" selected>Médio</option><option value="difícil">Difícil</option></select>
           <span class="quiz-gen-label">Qtde:</span>
-          <select class="quiz-select" id="quizQty"><option value="3">3</option><option value="5" selected>5</option><option value="10">10</option></select>
+          <select class="quiz-select" id="quizQty"><option value="3">3</option><option value="5" selected>5</option><option value="10">10</option><option value="15">15</option></select>
           <button class="quiz-gen-btn" id="quizGenBtn" onclick="generateQuiz()">⚡ Gerar Quiz</button>
         </div></div>
         <div id="quizScoreBar" style="display:none"></div>
@@ -665,6 +749,15 @@ USING (
           <button class="plan-gen-btn" id="planGenBtn" onclick="generatePlan()">📅 Gerar Plano</button>
         </div></div>
         <div class="plan-container" id="planContainer"><div style="text-align:center;color:var(--text-muted);padding:48px 0;font-size:14px;">Defina seu objetivo e clique em "Gerar Plano" 📅</div></div>
+      </div>
+    </div>
+
+    <!-- Atividades e quizzes dos professores -->
+    <div class="view" id="view-atividades-aluno">
+      <div class="quiz-view">
+        <div class="quiz-header-area"><div class="quiz-title-row"><span style="font-size:24px">📚</span><div class="quiz-main-title">Atividades</div></div><div class="quiz-subtitle">Atividades e quizzes enviados pelos seus professores</div></div>
+        <div id="atividadesAlunoList" style="color:var(--text-muted);font-size:13px;padding:20px 0">Carregando atividades...</div>
+        <div id="atividadeAlunoPlayer"></div>
       </div>
     </div>
 
@@ -1117,8 +1210,102 @@ USING (
   </div>
 </div>
 
+<section class="focus-timer-panel" id="focusTimerPanel" role="dialog" aria-modal="false" aria-labelledby="focusTimerTitle" hidden>
+  <div class="focus-timer-head">
+    <div><span class="focus-timer-kicker">SEU TEMPO, SEU RITMO</span><h2 id="focusTimerTitle">Sessão de foco</h2></div>
+    <button type="button" class="focus-timer-close" id="focusTimerClose" aria-label="Fechar temporizador">×</button>
+  </div>
+  <div class="focus-timer-modes" role="group" aria-label="Tipo de sessão">
+    <button type="button" class="active" id="focusModeWork" aria-pressed="true">Foco · 25 min</button>
+    <button type="button" id="focusModeBreak" aria-pressed="false">Pausa · 5 min</button>
+  </div>
+  <div class="focus-timer-clock" id="focusTimerClock" role="timer" aria-live="off">25:00</div>
+  <div class="focus-timer-track" aria-hidden="true"><i id="focusTimerProgress"></i></div>
+  <p class="focus-timer-status" id="focusTimerStatus" aria-live="polite">Pronto para começar. Uma tarefa de cada vez.</p>
+  <div class="focus-timer-actions">
+    <button type="button" class="focus-timer-primary" id="focusTimerStart">Iniciar foco</button>
+    <button type="button" class="focus-timer-secondary" id="focusTimerReset">Reiniciar</button>
+  </div>
+  <p class="focus-timer-note">O temporizador funciona neste dispositivo e não envia dados para sua conta.</p>
+</section>
 
 <script src="config.js"></script>
-<script src="script.js"></script>
+<script src="script.js?v=6"></script>
+<script>
+(function () {
+  'use strict';
+  const root = document.documentElement;
+  const trigger = document.getElementById('accessibilityTrigger');
+  const panel = document.getElementById('accessibilityPanel');
+  if (!trigger || !panel) return;
+
+  const scaleOut = document.getElementById('fontScaleValue');
+  const contrast = document.getElementById('contrastToggle');
+  const motion = document.getElementById('motionToggle');
+  const spacing = document.getElementById('spacingToggle');
+  const links = document.getElementById('linksToggle');
+  const defaults = { scale: 100, contrast: false, motion: false, spacing: false, links: false };
+  let prefs = { ...defaults };
+
+  try {
+    const saved = JSON.parse(localStorage.getItem('profRobertoA11y') || '{}');
+    if (saved && typeof saved === 'object' && !Array.isArray(saved)) prefs = { ...defaults, ...saved };
+  } catch (_) {}
+
+  function apply() {
+    const scale = Math.max(100, Math.min(150, Number(prefs.scale) || 100));
+    prefs.scale = scale;
+    root.style.setProperty('--a11y-scale', String(scale / 100));
+    root.classList.toggle('a11y-scaled', scale !== 100);
+    root.classList.toggle('a11y-contrast', Boolean(prefs.contrast));
+    root.classList.toggle('a11y-reduce-motion', Boolean(prefs.motion));
+    root.classList.toggle('a11y-readable-spacing', Boolean(prefs.spacing));
+    root.classList.toggle('a11y-underlined-links', Boolean(prefs.links));
+    document.dispatchEvent(new CustomEvent('profroberto:a11ychange', { detail: { motion: Boolean(prefs.motion) } }));
+
+    if (contrast) contrast.checked = Boolean(prefs.contrast);
+    if (motion) motion.checked = Boolean(prefs.motion);
+    if (spacing) spacing.checked = Boolean(prefs.spacing);
+    if (links) links.checked = Boolean(prefs.links);
+    if (scaleOut) scaleOut.textContent = scale + '%';
+
+    const down = document.getElementById('fontDecrease');
+    const up = document.getElementById('fontIncrease');
+    if (down) down.disabled = scale <= 100;
+    if (up) up.disabled = scale >= 150;
+
+    try { localStorage.setItem('profRobertoA11y', JSON.stringify(prefs)); } catch (_) {}
+  }
+
+  function setOpen(open, returnFocus = false) {
+    panel.hidden = !open;
+    trigger.setAttribute('aria-expanded', String(open));
+    if (open) document.getElementById('accessibilityClose')?.focus({ preventScroll: true });
+    else if (returnFocus) trigger.focus({ preventScroll: true });
+  }
+
+  trigger.addEventListener('click', () => setOpen(panel.hidden));
+  document.getElementById('accessibilityClose')?.addEventListener('click', () => setOpen(false, true));
+  document.getElementById('fontDecrease')?.addEventListener('click', () => { prefs.scale -= 10; apply(); });
+  document.getElementById('fontIncrease')?.addEventListener('click', () => { prefs.scale += 10; apply(); });
+  contrast?.addEventListener('change', () => { prefs.contrast = contrast.checked; apply(); });
+  motion?.addEventListener('change', () => { prefs.motion = motion.checked; apply(); });
+  spacing?.addEventListener('change', () => { prefs.spacing = spacing.checked; apply(); });
+  links?.addEventListener('change', () => { prefs.links = links.checked; apply(); });
+  document.getElementById('accessibilityReset')?.addEventListener('click', () => { prefs = { ...defaults }; apply(); });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !panel.hidden) {
+      e.preventDefault();
+      setOpen(false, true);
+    }
+  });
+  document.addEventListener('click', e => {
+    if (!panel.hidden && !e.target.closest('#accessibilityTools')) setOpen(false);
+  });
+
+  apply(); // The panel stays closed and all optional enhancements start disabled.
+})();
+</script>
 </body>
 </html>
