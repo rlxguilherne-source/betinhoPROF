@@ -1,35 +1,28 @@
-PROFESSOR ROBERTO — VERSÃO 6.1
+PROFESSOR ROBERTO — VERSÃO 8
 
-Esta versão mantém a base da V4 e adiciona:
-- navegação inferior dedicada a celulares;
-- ajustes de teclado virtual e áreas seguras (notch);
-- temporizador Pomodoro local (25 min de foco / 5 min de pausa);
-- acessibilidade opcional com escala de texto (até 150%), alto contraste, redução real das animações do canvas, espaçamento de leitura e links sublinhados;
-- melhorias de foco visível e navegação por teclado.
+O QUE FOI CORRIGIDO
+- Camada do menu lateral móvel reforçada: a página fica abaixo do menu e o escurecimento fica sempre atrás do painel.
+- O menu e os botões internos mantêm os toques ativos ao abrir em celulares.
+- Preferência Divertido/Formal agora fica salva neste navegador e continua selecionada após atualizar o site.
+- O seletor do menu e o do cabeçalho permanecem sincronizados.
+- Trocar o estilo não apaga mais as mensagens da conversa atual; a alteração vale para as próximas respostas.
+- O modo utilizado também é atualizado no registro da conversa salva.
+- URLs dos arquivos CSS/JS receberam um identificador novo e _headers pede revalidação para evitar cache antigo no Netlify.
 
 INSTALAÇÃO
-1. Faça uma cópia de segurança dos arquivos atuais do site.
+1. Faça backup da versão publicada.
 2. Extraia este ZIP.
-3. Substitua os arquivos do projeto pelos arquivos desta pasta.
-4. Mantenha os nomes dos arquivos e a organização na mesma pasta.
-5. Publique novamente no Netlify e faça Ctrl+F5 no navegador.
+3. Publique TODOS os arquivos e pastas desta versão juntos no Netlify (incluindo index.html, script.js, style.css, config.js e _headers).
+4. No celular, feche a aba antiga e abra o site novamente. Se ainda aparecer versão antiga, limpe os dados/cache do site no navegador.
 
-Os arquivos config.js e setup_supabase.sql foram mantidos sem alterações.
-O temporizador funciona localmente e não cria tabelas nem envia dados ao Supabase.
-As opções de acessibilidade começam desligadas e ficam salvas no navegador do usuário.
+ARQUIVOS DE BACKEND
+- config.js foi mantido.
+- setup_supabase.sql foi mantido sem alterações.
+- Não foram adicionadas tabelas novas.
 
-VALIDAÇÃO REALIZADA
-- sintaxe JavaScript (node --check);
-- estrutura e referências locais dos arquivos;
-- compactação e integridade do ZIP.
+VALIDAÇÃO
+- Node.js: sintaxe do script.js.
+- Playwright/Chromium em viewport móvel: abertura do menu, hit-testing confirmando que o botão Formal fica no topo da pilha, clique normal sem force, atualização do estado, sincronização aria-pressed, fechamento do menu, preservação das mensagens e gravação/leitura da preferência em localStorage de teste.
+- Teste de CSS/HTML e integridade do ZIP.
 
-Ainda é necessário testar login, permissões, chamadas de IA e fluxos de professor/aluno no ambiente Supabase publicado.
-
-
-CORREÇÃO V6.1 — MENU MOBILE
-- Corrigida a ordem das camadas do menu lateral: o fundo escuro agora fica atrás do menu, não na frente dele.
-- O menu foi mantido dentro do contêiner principal para que a hierarquia de z-index funcione corretamente em celular.
-- Adicionado botão X para fechar o menu, além do toque fora e da tecla Escape.
-- Os botões Gemini, Groq e Mistral agora têm área de toque maior e fecham o menu depois da seleção no celular.
-- O menu fechado deixa de receber foco por teclado/leitor de tela; ao abrir, o foco vai para o botão de fechar.
-- URLs de CSS/JS atualizadas para v=6, reduzindo a chance de o navegador reutilizar a versão anterior em cache.
+A integração completa com a conta Supabase e chamadas reais de IA precisa ser confirmada no site publicado.

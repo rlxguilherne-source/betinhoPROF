@@ -119,15 +119,28 @@ async function invokeEdgeFunction(name, body, { binary = false } = {}) {
 }
 
 /* ═══════════════════════════════════════
+   PREFERENCE — response style
+═══════════════════════════════════════ */
+function getSavedResponseMode() {
+  try { return localStorage.getItem('profRoberto.responseMode') === 'formal' ? 'formal' : 'divertido'; }
+  catch (_) { return 'divertido'; }
+}
+function saveResponseMode(mode) {
+  try { localStorage.setItem('profRoberto.responseMode', mode === 'formal' ? 'formal' : 'divertido'); }
+  catch (_) { /* storage may be unavailable; the in-memory preference still works */ }
+}
+
+/* ═══════════════════════════════════════
    STATE
 ═══════════════════════════════════════ */
 let state = {
-  messages: [], currentSubject: 'geral', currentMode: 'divertido',
+  messages: [], currentSubject: 'geral', currentMode: getSavedResponseMode(),
   currentProvider: 'gemini',
   isLoading: false, isSpeaking: false, isListening: false,
   recognition: null, currentAudio: null, currentView: 'chat', attachedPDF: null,
   gamification: { totalMsgs: 0, quizzesCompleted: 0, quizScores: [], subjectCounts: {}, streak: 0, weeklyActivity: [0,0,0,0,0,0,0], lastActiveDay: '', weekStart: '' }
 };
+syncModeButtons(); // Keep desktop and sidebar controls aligned with the saved preference.
 let currentUser = null;
 let chatHistory = [];
 let modoAulaAtivo = null; // { materia, serie, turma } ou null
@@ -194,9 +207,9 @@ const DB = {
     } catch(e) { console.warn('DB.saveChatSession', e); return null; }
   },
 
-  async updateChatSession(id, messages) {
+  async updateChatSession(id, messages, mode = state.currentMode) {
     try {
-      const { error } = await sb.from('chat_history').update({ messages: JSON.stringify(messages) }).eq('id', id);
+      const { error } = await sb.from('chat_history').update({ messages: JSON.stringify(messages), mode }).eq('id', id);
       if (error) { console.warn('DB.updateChatSession', error); return false; }
       return true;
     } catch(e) { console.warn('DB.updateChatSession', e); return false; }
@@ -903,6 +916,7 @@ function setSidebarOpen(open, returnFocus = false) {
 
   sidebar.classList.toggle('open', open);
   overlay.classList.toggle('show', open);
+  document.body.classList.toggle('sidebar-menu-open', Boolean(open && isMobile));
   overlay.setAttribute('aria-hidden', String(!open));
   sidebar.setAttribute('aria-hidden', String(isMobile && !open));
   // Prevent keyboard/screen-reader focus from entering an off-canvas drawer.
@@ -1005,7 +1019,9 @@ async function loadChatSession(id) {
   sessionRef = { id };
   state.messages = session.messages || [];
   state.currentSubject = session.subject || 'geral';
-  state.currentMode = session.mode || 'divertido';
+  state.currentMode = session.mode === 'formal' ? 'formal' : 'divertido';
+  saveResponseMode(state.currentMode);
+  syncModeButtons();
   document.getElementById('chat').innerHTML = '';
   state.messages.forEach(m => appendMsg(m.role === 'model' ? 'ai' : 'user', m.parts[0].text));
   setView('chat');
@@ -1030,7 +1046,7 @@ function saveActiveSession() {
   _sessionSaveChain = _sessionSaveChain.then(async () => {
     try {
       if (ref.id) {
-        await DB.updateChatSession(ref.id, messages);
+        await DB.updateChatSession(ref.id, messages, mode);
       } else {
         ref.id = await DB.saveChatSession(uid, subject, mode, messages);
         if (ref.id) await loadChatHistory();
@@ -1136,12 +1152,33 @@ function renderWelcome() {
 /* ═══════════════════════════════════════
    MODE / SUBJECT / PROVIDER
 ═══════════════════════════════════════ */
+function syncModeButtons() {
+  const mode = state.currentMode === 'formal' ? 'formal' : 'divertido';
+  document.querySelectorAll('.mode-btn, .sidebar-mode-btn').forEach(button => {
+    const active = button.dataset.mode === mode;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  const currentLabel = document.getElementById('sidebarModeCurrent');
+  if (currentLabel) currentLabel.textContent = mode === 'formal' ? 'Formal' : 'Divertido';
+}
+
 function setMode(mode) {
-  saveActiveSession(); sessionRef = { id: null };
-  state.currentMode = mode; state.messages = [];
-  stopSpeaking(null);
-  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
-  renderWelcome();
+  if (mode !== 'divertido' && mode !== 'formal') return;
+  const changed = state.currentMode !== mode;
+  state.currentMode = mode;
+  saveResponseMode(mode);
+  syncModeButtons();
+
+  if (changed) {
+    stopSpeaking(null);
+    // Preserve the current conversation; only the style for future replies changes.
+    if (state.messages.length) saveActiveSession();
+    else renderWelcome();
+    showToast(`Estilo de resposta: ${mode === 'formal' ? 'Formal' : 'Divertido'}`, 'success');
+    window.setTimeout(hideToast, 1800);
+  }
+  if (isMobile) closeSidebar(true);
 }
 
 function setSubject(el, s) {

@@ -12,7 +12,7 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=8-20261123">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <!-- PDF.js (extração de texto de PDFs); o OCR (Tesseract.js) é carregado sob demanda -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -547,6 +547,22 @@ USING (
       <div class="nav-item" role="button" tabindex="0" onclick="clearChat()"><span class="nav-icon">🗑️</span> Limpar chat</div>
     </nav>
 
+    <section class="sidebar-mode-section" aria-label="Estilo de resposta">
+      <div class="sidebar-mode-heading">
+        <div class="nav-section-label">Estilo de resposta</div>
+        <span class="sidebar-mode-current" id="sidebarModeCurrent">Divertido</span>
+      </div>
+      <div class="sidebar-mode-row" role="group" aria-label="Escolher estilo de resposta">
+        <button type="button" class="sidebar-mode-btn active" data-mode="divertido" aria-pressed="true" onclick="setMode('divertido')">
+          <span class="sidebar-mode-emoji" aria-hidden="true">😄</span><span>Divertido</span>
+        </button>
+        <button type="button" class="sidebar-mode-btn" data-mode="formal" aria-pressed="false" onclick="setMode('formal')">
+          <span class="sidebar-mode-emoji" aria-hidden="true">📋</span><span>Formal</span>
+        </button>
+      </div>
+      <p class="sidebar-mode-hint">Escolha como o Professor Roberto conversa com você.</p>
+    </section>
+
     <div class="sidebar-providers">
       <div class="nav-section-label" style="padding:0 0 8px">Modelo de IA</div>
       <div class="provider-row">
@@ -596,8 +612,8 @@ USING (
       <div class="header-title-wrap"><div class="view-label" id="viewLabel">Chat IA</div><span class="header-context">SEU AMBIENTE DE APRENDIZAGEM</span></div>
 
       <div class="mode-btns">
-        <button class="mode-btn active" data-mode="divertido" onclick="setMode('divertido')">😄 Divertido</button>
-        <button class="mode-btn" data-mode="formal" onclick="setMode('formal')">📋 Formal</button>
+        <button type="button" class="mode-btn active" data-mode="divertido" aria-pressed="true" onclick="setMode('divertido')">😄 Divertido</button>
+        <button type="button" class="mode-btn" data-mode="formal" aria-pressed="false" onclick="setMode('formal')">📋 Formal</button>
       </div>
 
       <div class="header-spacer"></div>
@@ -1230,7 +1246,7 @@ USING (
 </section>
 
 <script src="config.js"></script>
-<script src="script.js?v=6"></script>
+<script src="script.js?v=8-20261123"></script>
 <script>
 (function () {
   'use strict';
